@@ -373,7 +373,7 @@ setMethod(
 #       running into memory issues, try halving/quartering
 #       getOption("DelayedArray.block.size")
 preprocessNoob <- function(rgSet, offset = 15, dyeCorr = TRUE, verbose = FALSE,
-                           dyeMethod = c("single", "reference")) {
+                           dyeMethod = c("single", "reference"), dropRS=T) {
 
     # Check inputs
     .isRGOrStop(rgSet)
@@ -383,13 +383,19 @@ preprocessNoob <- function(rgSet, offset = 15, dyeCorr = TRUE, verbose = FALSE,
     oob <- getOOB(rgSet)
     GreenOOB <- oob[["Grn"]]
     RedOOB <- oob[["Red"]]
-    MSet <- preprocessRaw(rgSet)
-    probe.type <- getProbeType(MSet, withColor = TRUE)
-    Green_probes <- which(probe.type == "IGrn")
-    Red_probes <- which(probe.type == "IRed")
-    d2.probes <- which(probe.type == "II")
+    MSet <- preprocessRaw(rgSet, dropRS)
+    anno <- getAnnotation(MSet)
+    probe.type <- paste0(anno$Type, anno$Color)
+    Green_probes <- intersect(rownames(MSet), anno$Name[probe.type == "IGrn"])
+    Red_probes <- intersect(rownames(MSet), anno$Name[probe.type == "IRed"])
+    d2.probes <- intersect(rownames(MSet), anno$Name[probe.type == "II"])
     Meth <- getMeth(MSet)
     Unmeth <- getUnmeth(MSet)
+
+    if (!dropRS)
+    {
+       d2.probes <- c(d2.probes, intersect(rownames(MSet), getProbeInfo(rgSet, type = "SnpII")$Name))
+    }
 
     if (dyeCorr) {
         control_probes <- getProbeInfo(rgSet, type = "Control")

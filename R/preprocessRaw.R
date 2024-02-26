@@ -143,7 +143,7 @@ setMethod(
 #       `Red` and `Green`, the number of elements loaded into memory is
 #       doubled. If running into memory issues, try halving
 #       getOption("DelayedArray.block.size")
-preprocessRaw <- function(rgSet) {
+preprocessRaw <- function(rgSet, dropRS=T) {
     .isRGOrStop(rgSet)
 
     # Extract data to pass to low-level functions that construct `M` and `U`
@@ -153,6 +153,13 @@ preprocessRaw <- function(rgSet) {
     TypeI.Red <- getProbeInfo(rgSet, type = "I-Red")
     TypeI.Green <- getProbeInfo(rgSet, type = "I-Green")
     TypeII <- getProbeInfo(rgSet, type = "II")
+    if (!dropRS)
+    {
+      # TODO: type I SNP probes
+      SnpII <- getProbeInfo(rgSet, type = "SnpII")
+      TypeII <- rbind(TypeII, SnpII)
+      locusNames <- c(locusNames, SnpII$Name) 
+    }
 
     # Construct `M` and `U`
     M_and_U <- .preprocessRaw(

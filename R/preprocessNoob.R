@@ -394,6 +394,9 @@ preprocessNoob <- function(rgSet, offset = 15, dyeCorr = TRUE, verbose = FALSE,
 
     if (!dropRS)
     {
+       snp_type1_info <- getProbeInfo(rgSet, type="SnpI")
+       Green_probes <- c(Green_probes, intersect(rownames(MSet), snp_type1_info$Name[snp_type1_info$Color=="Grn"]))
+       Red_probes <- c(Red_probes, intersect(rownames(MSet), snp_type1_info$Name[snp_type1_info$Color=="Red"]))
        d2.probes <- c(d2.probes, intersect(rownames(MSet), getProbeInfo(rgSet, type = "SnpII")$Name))
     }
 

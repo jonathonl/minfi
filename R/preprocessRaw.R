@@ -160,7 +160,7 @@ preprocessRaw <- function(rgSet, dropRS=T) {
       TypeI.Green <- rbind(TypeI.Green, SnpI[SnpI$Color=="Grn",])
       SnpII <- getProbeInfo(rgSet, type = "SnpII")
       TypeII <- rbind(TypeII, SnpII)
-      locusNames <- c(locusNames, SnpII$Name, SnpI$Name) 
+      locusNames <- c(locusNames, SnpI$Name, SnpII$Name) 
     }
 
     # Construct `M` and `U`
